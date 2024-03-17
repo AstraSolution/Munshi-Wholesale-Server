@@ -12,7 +12,6 @@ usersRoute.get("/users/:email", getOneUserController);
 // create a new user
 usersRoute.post("/users", postUserController);
 
-
 // update a user
 usersRoute.patch("/users/:id", updateUser);
 

@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const BrandsSchema = new mongoose.Schema({
-  Brand_name: {
+  brandName: {
     type: String,
     required: true,
   },
-  Brand_image: {
+  brandImage: {
     type: String,
     required: true,
   },
