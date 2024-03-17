@@ -1,13 +1,8 @@
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+const app = require("./app");
+const connectDB = require("./src/config/db");
+const { serverPort } = require("./src/secret");
 
-
-app.get('/', (req, res) => {
-    res.send('Welcome to Munshi Wholesale server!');
-});
-
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(serverPort, async() => {
+  console.log(`Munshi Wholesale is running at http://localhost:${serverPort} `);
+  await connectDB()
 });
