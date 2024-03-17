@@ -3,6 +3,7 @@ const { mongodbURL } = require("../secret");
 
 const connectDB = async () => {
   try {
+    console.log("Connecting to DB ....");
     await mongoose.connect(mongodbURL);
     console.log("Connection to DB is successful");
 
