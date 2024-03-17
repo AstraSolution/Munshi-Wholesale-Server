@@ -17,5 +17,3 @@ usersRoute.patch("/users/:id", updateUser);
 
 
 module.exports = usersRoute;
-
-// update
