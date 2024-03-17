@@ -38,6 +38,9 @@ app.use(morgan("dev"));
 // all api endpoints
 app.use("/api/v1", router);
 
+// all api endpoints
+app.use("/api/v1", router);
+
 // home route
 app.use("/", (req, res) => {
   res.status(200).json({ message: "Welcome to Munshi-Wholesale Server" });
