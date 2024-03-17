@@ -13,6 +13,9 @@ const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 const limier = rateLimit({ windowMs: 60 * 60 * 1000, limit: 1000 });
 const cors = require("cors");
+const brandsRoute = require("./src/routers/brandsRoutes");
+const { postBrand } = require("./src/controllers/brandsControllers");
+const Brands = require("./src/models/BrandMobel");
 const corsOptions = {
   origin: ["*"],
   credentials: true,
@@ -42,6 +45,23 @@ app.use("/", (req, res) => {
 
 // all api endpoints
 app.use("/api/v1", router);
+app.use("/api/v1/brands", async (req, res) => {
+  console.log("brand post...");
+try {
+  const brand = req.body;
+  const query = { brandName: brand.brandName };
+  const existingBrand = await Brands.findOne(query);
+  if (existingBrand) {
+    return res.send({ message: "this brand already exists", insertedId: null });
+  }
+  const newBrand = new Brands(brand);
+  const result = await newBrand.save();    
+  res.send(result);
+} catch (error) {
+  console.error("Error post a brand data:", error);
+  res.status(500).json({ message: "Internal server error" });
+}
+})
 
 app.get("*", (req, res) => {
   res.status(401).json({ message: "Invalid URL" });

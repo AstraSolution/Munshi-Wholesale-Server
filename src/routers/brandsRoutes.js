@@ -1,4 +1,5 @@
 const express = require("express");
+const { getAllBrands, getOneBrand, postBrand, updateBrand, deleteBrand } = require("../controllers/brandsControllers");
 
 const brandsRoute = express.Router();
 

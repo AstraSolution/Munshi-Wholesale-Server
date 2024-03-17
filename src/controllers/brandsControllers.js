@@ -24,6 +24,7 @@ exports.getOneBrand = async (req, res) => {
 
 // post a brand controller
 exports.postBrand = async (req, res) => {
+    console.log("brand post...");
   try {
     const brand = req.body;
     const query = { brandName: brand.brandName };
