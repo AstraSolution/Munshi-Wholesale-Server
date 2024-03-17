@@ -36,9 +36,9 @@ app.use(cookieParser());
 app.use(morgan("dev"));
 
 // home route
-app.use("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to Munshi-Wholesale Server" });
-});
+// app.use("/", (req, res) => {
+//   res.status(200).json({ message: "Welcome to Munshi-Wholesale Server" });
+// });
 
 // all api endpoints
 app.use("/api/v1", router);
