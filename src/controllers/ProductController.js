@@ -11,6 +11,18 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+// get all product controller
+exports.getProductForHomePage = async (req, res) => {
+  try {
+    const products = await ProductsModel.aggregate([
+      { $sample: { size: 8 } }, // Shuffle and limit to 8 documents
+    ]);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // create new product controller
 exports.createProduct = async (req, res) => {
   const product = new ProductsModel(req.body);
