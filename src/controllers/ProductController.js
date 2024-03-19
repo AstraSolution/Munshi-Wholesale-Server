@@ -64,7 +64,7 @@ exports.deleteProductById = async (req, res) => {
   }
 };
 
-// get product title controller
+// get product by title controller
 exports.getProductsByTitle = async (req, res) => {
   try {
     const title = new RegExp(req.params.title, "i");

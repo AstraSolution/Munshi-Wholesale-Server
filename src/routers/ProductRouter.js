@@ -8,6 +8,7 @@ const {
   getProductsByBrand,
   getProductsByCategory,
   getProductsByTitle,
+  getProductsByTitleCategoryBrand,
 } = require("../controllers/ProductController");
 const productRouter = express.Router();
 
