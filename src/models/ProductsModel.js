@@ -3,8 +3,12 @@ const mongoose = require("mongoose");
 const DataSchema = new mongoose.Schema({
   title: String,
   image: [String],
-  category: String,
-  brand: String,
+  category: {
+    type: String,
+  },
+  brand: {
+    type: String,
+  },
   price: Number,
   description: String,
   quantity: Number,
