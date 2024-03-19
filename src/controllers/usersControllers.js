@@ -58,7 +58,6 @@ exports.getOneUserController = async (req, res) => {
   }
 };
 
-
 // controller for  create new user
 exports.postUserController = async (req, res) => {
   try {
@@ -94,5 +93,3 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
