@@ -1,10 +1,21 @@
 const ProductsModel = require("../models/ProductsModel");
 
-
 // get all product controller
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await ProductsModel.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get all product controller
+exports.getProductForHomePage = async (req, res) => {
+  try {
+    const products = await ProductsModel.aggregate([
+      { $sample: { size: 8 } }, // Shuffle and limit to 8 documents
+    ]);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,6 +71,39 @@ exports.deleteProductById = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
     res.json({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get product by title controller
+exports.getProductsByTitle = async (req, res) => {
+  try {
+    const title = new RegExp(req.params.title, "i");
+    const products = await ProductsModel.find({ title });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get product by category controller
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const category = new RegExp(req.params.category, "i");
+    const products = await ProductsModel.find({ category });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get product by brand controller
+exports.getProductsByBrand = async (req, res) => {
+  try {
+    const brand = new RegExp(req.params.brand, "i");
+    const products = await ProductsModel.find({ brand });
+    res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

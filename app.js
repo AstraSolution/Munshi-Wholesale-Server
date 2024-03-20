@@ -13,8 +13,9 @@ const xss = require("xss-clean");
 const rateLimit = require("express-rate-limit");
 const limier = rateLimit({ windowMs: 60 * 60 * 1000, limit: 1000 });
 const cors = require("cors");
+
 const corsOptions = {
-  origin: ["*"],
+  origin: ["*", "http://localhost:5173", "http://localhost:5174"],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -33,10 +34,12 @@ app.use(morgan("dev"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(morgan("dev"));
+
+
 
 // all api endpoints
 app.use("/api/v1", router);
+
 
 // home route
 app.use("/", (req, res) => {

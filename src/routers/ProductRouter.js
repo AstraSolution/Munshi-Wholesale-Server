@@ -5,11 +5,20 @@ const {
   getProductById,
   updateProductById,
   deleteProductById,
+  getProductForHomePage,
+  getProductsByBrand,
+  getProductsByCategory,
+  getProductsByTitle,
+  getProductsByTitleCategoryBrand,
+
 } = require("../controllers/ProductController");
 const productRouter = express.Router();
 
 // get all product router
 productRouter.get("/products", getAllProducts);
+
+// get  products for home page router
+productRouter.get("/products/home", getProductForHomePage);
 
 // create new product router
 productRouter.post("/products", createProduct);
@@ -22,5 +31,14 @@ productRouter.put("/products/:id", updateProductById);
 
 // delete a product by product id
 productRouter.delete("/products/:id", deleteProductById);
+
+// get products accoriding to the title
+productRouter.get("/products/title/:title", getProductsByTitle);
+
+// get products accoriding to the brand
+productRouter.get("/products/brand/:brand", getProductsByBrand);
+
+// get products accoriding to the category
+productRouter.get("/products/category/:category", getProductsByCategory);
 
 module.exports = productRouter;
