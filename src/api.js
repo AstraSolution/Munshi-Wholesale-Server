@@ -1,24 +1,18 @@
 const express = require("express");
-const productRouter = require("./routers/ProductRouter");
-const categoryRouter = require("./routers/CategoryRouter");
-const usersRoute = require("./routers/usersRoutes");
-const brandsRoute = require("./routers/brandsRoutes");
-const jwtRoute = require("./routers/jwtRoute");
 const router = express.Router();
 
-// product router
-router.use(productRouter);
+// Import all routers
+const routers = [
+  require("./routers/ProductRouter"),
+  require("./routers/CategoryRouter"),
+  require("./routers/usersRoutes"),
+  require("./routers/brandsRoutes"),
+  require("./routers/jwtRoute"),
+  require("./routers/cartsRoutes"),
+  require("./routers/wishlistRoutes")
+];
 
-// category router
-router.use(categoryRouter);
-
-// jwt router
-router.use(jwtRoute);
-
-// users router
-router.use(usersRoute);
-
-// brands router
-router.use(brandsRoute);
+// Dynamically apply routers
+routers.forEach(route => router.use(route));
 
 module.exports = router;

@@ -5,15 +5,20 @@ const {
   getProductById,
   updateProductById,
   deleteProductById,
+  getProductForHomePage,
   getProductsByBrand,
   getProductsByCategory,
   getProductsByTitle,
   getProductsByTitleCategoryBrand,
+
 } = require("../controllers/ProductController");
 const productRouter = express.Router();
 
 // get all product router
 productRouter.get("/products", getAllProducts);
+
+// get  products for home page router
+productRouter.get("/products/home", getProductForHomePage);
 
 // create new product router
 productRouter.post("/products", createProduct);
