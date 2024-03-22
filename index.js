@@ -1,5 +1,4 @@
 const { serverPort } = require("./src/secret");
-require("dotenv").config;
 const http = require("http");
 const app = require("./app");
 const connectToDB = require("./src/config/db");
