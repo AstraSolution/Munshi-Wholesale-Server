@@ -1,18 +1,19 @@
 const mongoose = require("mongoose");
 
-const DataSchema = new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   title: String,
   image: [String],
-  category: {
-    type: String,
-  },
-  brand: {
-    type: String,
-  },
+  category: String,
+  brand: String,
   price: Number,
   description: String,
   quantity: Number,
   model: String,
+  offer: {
+    offer_title: String,
+    discount: String,
+    offer_image: String,
+  },
   specification: {
     volts: String,
     power_source: String,
@@ -24,6 +25,7 @@ const DataSchema = new mongoose.Schema({
     safety_features: [String],
     compatibility: [String],
   },
+  product_reviews: [String],
   included_accessories: [String],
   weight: String,
   dimensions: String,
@@ -37,16 +39,16 @@ const DataSchema = new mongoose.Schema({
   features: [String],
   availability: String,
   shipping_weight: String,
-  product_reviews: [String],
   shipping_dimensions: String,
   shipping_restrictions: String,
   shipping_method: [String],
   assembly_required: Boolean,
   country_of_origin: String,
   manufacturer: String,
+  return_available: Boolean,
   return_policy: String,
 });
 
-const ProductsModel = mongoose.model("products", DataSchema);
+const ProductsModel = mongoose.model("products", productSchema);
 
 module.exports = ProductsModel;
