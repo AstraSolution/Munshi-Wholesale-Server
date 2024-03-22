@@ -4,6 +4,7 @@ const router = require("./src/api");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const createError = require("http-errors");
 
 // security middleware import
 const helmet = require("helmet");
@@ -35,11 +36,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-
-
 // all api endpoints
 app.use("/api/v1", router);
-
 
 // home route
 app.use("/", (req, res) => {
@@ -48,6 +46,19 @@ app.use("/", (req, res) => {
 
 app.get("*", (req, res) => {
   res.status(401).json({ message: "Invalid URL" });
+});
+
+// client site error
+app.use((req, res, next) => {
+  next(createError(404, { message: "route not found" }));
+});
+
+// server error
+app.use((err, req, res, next) => {
+  return res.status(err.status || 500).json({
+    success: false,
+    message: err.message,
+  });
 });
 
 module.exports = app;
