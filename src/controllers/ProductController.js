@@ -3,13 +3,43 @@ const ProductsModel = require("../models/ProductsModel");
 
 // get all product controller
 exports.getAllProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
   try {
-    const products = await ProductsModel.find();
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const totalProduct = await ProductsModel.countDocuments()
+
+    const pagination = {};
+    if (endIndex < totalProduct) {
+      pagination.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+
+    const aggregationPipline = [
+      {
+        $skip: startIndex,
+      },
+      {
+        $limit: limit,
+      },
+    ];
+    const products = await ProductsModel.aggregate(aggregationPipline);
     res.json(products);
   } catch (error) {
+    console.log("error: ", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // get all product controller
 exports.getProductForHomePage = async (req, res) => {

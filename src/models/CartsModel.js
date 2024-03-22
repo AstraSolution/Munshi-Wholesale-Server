@@ -10,10 +10,10 @@ const CartsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    owner_email: {
-        type: String,
-        required: true
-    },
+    // owner_email: {
+    //     type: String,
+    //     required: true
+    // },
      product_id: {
         type: String,
         required: true
