@@ -9,10 +9,10 @@ const routers = [
   require("./routers/brandsRoutes"),
   require("./routers/jwtRoute"),
   require("./routers/cartsRoutes"),
-  require("./routers/wishlistRoutes")
+  require("./routers/wishlistRoutes"),
 ];
 
 // Dynamically apply routers
-routers.forEach(route => router.use(route));
+routers.forEach((route) => router.use(route));
 
 module.exports = router;
