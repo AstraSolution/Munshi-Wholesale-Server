@@ -12,7 +12,7 @@ const WishlistSchema = new mongoose.Schema({
     },
     owner_email: {
         type: String,
-        required: true
+        // required: true
     },
      product_id: {
         type: String,
@@ -33,6 +33,8 @@ const WishlistSchema = new mongoose.Schema({
     product_image: [String],
     stock_limit: Number,
     title: String,
+    dimensions: String,
+    color: [String]
 });
 
 

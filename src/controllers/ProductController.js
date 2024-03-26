@@ -1,13 +1,32 @@
 const ProductsModel = require("../models/ProductsModel");
 
-// get all product controller
+// get all products by filtering 
 exports.getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
+  const brand = req.query.brand; // Brand filter from query
+  const minPrice = parseFloat(req.query.minPrice); // Minimum price filter from query
+  const maxPrice = parseFloat(req.query.maxPrice); // Maximum price filter from query
+  const category = req.query.category; // Category filter from query
+
   try {
+    let matchCriteria = {};
+
+    // Constructing match criteria based on provided filters
+    if (brand) {
+      matchCriteria.brand = brand;
+    }
+    if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+      matchCriteria.price = { $gte: minPrice, $lte: maxPrice };
+    }
+    if (category) {
+      matchCriteria.category = { $regex: category, $options: 'i' }; // Case-insensitive regex matching for category
+    }
+
+    const totalProduct = await ProductsModel.countDocuments(matchCriteria);
+
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
-    const totalProduct = await ProductsModel.countDocuments()
 
     const pagination = {};
     if (endIndex < totalProduct) {
@@ -23,21 +42,21 @@ exports.getAllProducts = async (req, res) => {
       };
     }
 
-    const aggregationPipline = [
-      {
-        $skip: startIndex,
-      },
-      {
-        $limit: limit,
-      },
+    const aggregationPipeline = [
+      { $match: matchCriteria }, // Filter documents based on match criteria
+      { $skip: startIndex },
+      { $limit: limit },
     ];
-    const products = await ProductsModel.aggregate(aggregationPipline);
-    res.json(products);
+
+    const products = await ProductsModel.aggregate(aggregationPipeline);
+    res.json({ products, totalProduct, pagination });
   } catch (error) {
     console.log("error: ", error);
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 
 // get all product controller

@@ -10,10 +10,10 @@ const CartsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // owner_email: {
-    //     type: String,
-    //     required: true
-    // },
+    owner_email: {
+        type: String,
+        // required: true
+    },
      product_id: {
         type: String,
         required: true
@@ -33,6 +33,8 @@ const CartsSchema = new mongoose.Schema({
     product_image: [String],
     stock_limit: Number,
     title: String,
+    dimensions: String,
+    color: [String]
 });
 
 
