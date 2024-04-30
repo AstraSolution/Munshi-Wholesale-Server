@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Import all routers
 const routers = [
+    require('./routers/ProductRouter'),
     require("./routers/cartsRoutes"),
 ];
 
