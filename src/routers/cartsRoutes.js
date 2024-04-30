@@ -19,10 +19,10 @@ cartsRouter.post("/carts", postManyCartsConroller )
 // update a cart
 cartsRouter.patch("/myCarts/:id", updateCartController )
 
-// get all carts by customer email
+// delete a cart by id
 cartsRouter.delete("/myCarts/:id", deleteCartController )
 
-// get all carts by customer email
+// delete my all carts by email
 cartsRouter.delete("/deleteCarts/:email", deleteMyCartsController )
 
 
