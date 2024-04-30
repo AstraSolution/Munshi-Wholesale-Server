@@ -62,7 +62,7 @@ const userSchema = new Schema(
     { timestamps: true }
 );
 
-const Users = model("Users", userSchema);
+const Users = model("users", userSchema);
 
 module.exports = Users;
 
