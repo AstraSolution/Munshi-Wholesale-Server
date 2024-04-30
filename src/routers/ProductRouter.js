@@ -3,19 +3,19 @@ const productRouter = express.Router();
 const productController = require('../controllers/productController');
 
 // Add New Product
-productRouter.post('/', productController.addProduct);
+productRouter.post('/products', productController.addProduct);
 
 // Get All Products
-productRouter.get('/', productController.getAllProducts);
+productRouter.get('/products', productController.getAllProducts);
 
 // Get a product
-productRouter.get('/:id', productController.getProductById);
+productRouter.get('/products/:id', productController.getProductById);
 
 // Update Product Details
-productRouter.put('/:id', productController.updateProduct);
+productRouter.put('/products/:id', productController.updateProduct);
 
 // Delete Product
-productRouter.delete('/:id', productController.deleteProduct);
+productRouter.delete('/products/:id', productController.deleteProduct);
 
 // Find/query products according to the category
 productRouter.get('/category/:category', productController.getProductsByCategory);
