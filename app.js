@@ -39,7 +39,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // API routes
-// app.use("/api/v1", router);
+app.use("/api/v1", router);
 
 // Home route
 app.get("/", (req, res) => {
