@@ -1,9 +1,9 @@
-const Product = require('../models/ProductModel');
+const Products = require('../models/ProductModel');
 
 // Add New Product
 exports.addProduct = async (req, res) => {
     try {
-        const product = await Product.create(req.body);
+        const product = await Products.create(req.body);
         res.status(201).json(product);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -13,7 +13,7 @@ exports.addProduct = async (req, res) => {
 // Get All Products
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Products.applyfind();
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,7 +24,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await Product.findById(id);
+        const product = await Products.applyfindById(id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -38,7 +38,7 @@ exports.getProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
+        const updatedProduct = await Products.applyfindByIdAndUpdate(id, req.body, { new: true });
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -52,7 +52,7 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedProduct = await Product.findByIdAndDelete(id);
+        const deletedProduct = await Products.applyfindByIdAndDelete(id);
         if (!deletedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -66,7 +66,7 @@ exports.deleteProduct = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
-        const products = await Product.find({ category });
+        const products = await Products.applyfind({ category });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -77,7 +77,7 @@ exports.getProductsByCategory = async (req, res) => {
 exports.getProductsByBrand = async (req, res) => {
     try {
         const { brand } = req.params;
-        const products = await Product.find({ brand });
+        const products = await Products.applyfind({ brand });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
