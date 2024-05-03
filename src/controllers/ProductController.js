@@ -13,7 +13,7 @@ exports.addProduct = async (req, res) => {
 // Get All Products
 exports.getAllProducts = async (req, res) => {
     try {
-        const products = await Products.applyfind();
+        const products = await Products.find();
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,7 +24,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
     try {
         const { id } = req.params;
-        const product = await Products.applyfindById(id);
+        const product = await Products.findById(id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -38,7 +38,7 @@ exports.getProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedProduct = await Products.applyfindByIdAndUpdate(id, req.body, { new: true });
+        const updatedProduct = await Products.findByIdAndUpdate(id, req.body, { new: true });
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -52,7 +52,7 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedProduct = await Products.applyfindByIdAndDelete(id);
+        const deletedProduct = await Products.findByIdAndDelete(id);
         if (!deletedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
@@ -66,7 +66,7 @@ exports.deleteProduct = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
-        const products = await Products.applyfind({ category });
+        const products = await Products.find({ category });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -77,7 +77,7 @@ exports.getProductsByCategory = async (req, res) => {
 exports.getProductsByBrand = async (req, res) => {
     try {
         const { brand } = req.params;
-        const products = await Products.applyfind({ brand });
+        const products = await Products.find({ brand });
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
