@@ -52,23 +52,10 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.updateUserInterest = async (req, res) => {
-  try {
-    const { email } = req.params;
-    const result = await Users.updateOne({ email }, req.body, { new: true });
-    res.send(result);
-  } catch (error) {
-    console.error("Error updating user interest:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 exports.getUserRoles = async (req, res) => {
   try {
     const { email } = req.params;
-    const user = await Users.findOne({ email }).select(
-      "isAdmin"
-    );
+    const user = await Users.findOne({ email }).select("isAdmin");
     res.send(user);
   } catch (error) {
     console.error("Error getting user roles:", error);
