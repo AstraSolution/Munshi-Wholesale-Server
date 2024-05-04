@@ -35,7 +35,10 @@ const userSchema = new Schema(
             type: String
         },
         address: String,
-        image: {
+        profilePhoto: {
+            type: String,
+        },
+        coverPhoto: {
             type: String,
         },
         gender: {
@@ -57,7 +60,11 @@ const userSchema = new Schema(
             default: false,
         },
         isFirstLogin: Boolean,
-
+        bio: String,
+        country: String,
+        state: String,
+        postCode: Number,
+        district: String,
     },
     { timestamps: true }
 );
