@@ -11,6 +11,7 @@ const routers = [
   require("./routers/wishlistRoutes"),
   require("./routers/OrdersRouter"),
   require("./routers/reviewsRoutes"),
+  require("./routers/jwtRoute"),
 ];
 
 // Dynamically apply routers

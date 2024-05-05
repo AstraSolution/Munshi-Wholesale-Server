@@ -14,7 +14,7 @@ OrdersRouter.get("/total-orders", getTotalProductsOrder);
 // get total salse
 OrdersRouter.get("/total-sales", getTotalProductsSold);
 
-// get total salse
+// get total revenue
 OrdersRouter.get("/total-revenue", getTotalRevenue);
 
 // get total customers

@@ -6,8 +6,14 @@ exports.getMyCartsController = async (req, res) => {
     const email = req.params.email;
     const filter = { customer_email: email };
     const carts = await Carts.find(filter);
+    let quantity = 0;
+    let totalPrice = 0;
+    carts?.map((cart) => {
+      quantity += cart?.quantity;
+      totalPrice += cart?.total_price;
+    });
 
-    res.send( carts);
+    res.send({ carts, quantity, totalPrice });
   } catch (error) {
     console.error("Error getting my carts data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -33,17 +39,21 @@ exports.postCartController = async (req, res) => {
     const email = req.params.email;
     const filter = { customer_email: email };
     const carts = await Carts.find(filter);
-    const existingProduct = carts.find((item) => item.product_id === cart?.product_id);
+    const existingProduct = carts.find(
+      (item) => item.product_id === cart?.product_id
+    );
+
+    console.log("existing products: ",existingProduct);
 
     if (existingProduct) {
-      return res.send({
+      return res.status(203).send({
         message: "This product already exists",
         insertedId: null,
       });
     }
     const newCart = new Carts(cart);
     const result = await newCart.save();
-    res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.error("Error getting cart data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -54,7 +64,7 @@ exports.postCartController = async (req, res) => {
 exports.postManyCartsConroller = async (req, res) => {
   try {
     const email = req.params.email;
-    const incomingCarts = req.body; 
+    const incomingCarts = req.body;
 
     // Retrieve existing carts for the user
     const filter = { customer_email: email };
@@ -65,7 +75,9 @@ exports.postManyCartsConroller = async (req, res) => {
     // Iterate over each incoming cart item
     for (const cart of incomingCarts) {
       // Check if the product already exists in the user's carts
-      const existingProduct = existingCarts.find(item => item.product_id === cart.product_id);
+      const existingProduct = existingCarts.find(
+        (item) => item.product_id === cart.product_id
+      );
 
       if (existingProduct) {
         // Product already exists, skip insertion
@@ -83,14 +95,13 @@ exports.postManyCartsConroller = async (req, res) => {
 
     res.send({
       message: "Carts added successfully",
-      insertedIds: insertedIds
+      insertedIds: insertedIds,
     });
   } catch (error) {
     console.error("Error adding cart data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 exports.updateCartController = async (req, res) => {
   try {
@@ -115,18 +126,15 @@ exports.deleteCartController = async (req, res) => {
   }
 };
 
-
 // delete my carts
 exports.deleteMyCartsController = async (req, res) => {
   try {
     const email = req.params.email;
 
-    const result = await Carts.deleteMany({customer_email: email});
+    const result = await Carts.deleteMany({ customer_email: email });
     res.send(result);
   } catch (error) {
     console.error("Error delete cart data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
