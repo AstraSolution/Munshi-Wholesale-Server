@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const { Schema, model } = require("mongoose");
+const { type } = require("os");
 
 const userSchema = new Schema(
     {
@@ -65,11 +66,12 @@ const userSchema = new Schema(
         state: String,
         postCode: Number,
         district: String,
+        isFirstLogin: Boolean,
+        isBan: Boolean
     },
-    { timestamps: true }
+  { timestamps: true }
 );
 
 const Users = model("users", userSchema);
 
 module.exports = Users;
-
