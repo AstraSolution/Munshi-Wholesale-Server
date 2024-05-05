@@ -5,9 +5,9 @@ const router = express.Router();
 const routers = [
   require("./routers/ProductRouter"),
   require("./routers/cartsRoutes"),
+  require("./routers/wishlistRoutes"),
   require("./routers/CategoryRouter"),
   require("./routers/BrandRouter"),
-  require("./routers/UserRouter"),
 ];
 
 // Dynamically apply routers

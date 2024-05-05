@@ -1,20 +1,20 @@
 const express = require('express');
 const brandRouter = express.Router();
-const brandController = require('../controllers/BrandController');
+const {addBrand, getAllBrands, getBrandById, updateBrand, deleteBrand} = require('../controllers/BrandController');
 
 // Add New Brand
-brandRouter.post('/brand', brandController.addBrand);
+brandRouter.post('/brand', addBrand);
 
 // Get All Brands
-brandRouter.get('/brand', brandController.getAllBrands);
+brandRouter.get('/brand', getAllBrands);
 
 // Get a Brand
-brandRouter.get('/brand/:id', brandController.getBrandById);
+brandRouter.get('/brand/:id', getBrandById);
 
 // Update Brand Details
-brandRouter.put('/brand/:id', brandController.updateBrand);
+brandRouter.put('/brand/:id', updateBrand);
 
 // Delete Brand
-brandRouter.delete('/brand/:id', brandController.deleteBrand);
+brandRouter.delete('/brand/:id', deleteBrand);
 
 module.exports = brandRouter;
