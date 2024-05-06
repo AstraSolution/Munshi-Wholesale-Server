@@ -9,73 +9,79 @@ const Carts = require("../models/CartsModel");
 const Orders = require("../models/OrdersModel");
 const Products = require("../models/ProductModel");
 const { default: mongoose } = require("mongoose");
-const SellerOrders = require("../models/SellerOrders");
 
 exports.postOrder = async (req, res) => {
-  const userEmail = req?.body?.email;
-  const filter = { user_email: userEmail };
-  const carts = await Carts.find(filter);
-  let totalProductPrice = 0;
-  let totalProducts = 0;
+  try {
+    const userEmail = req.body.email;
+    console.log("userEmail: ", userEmail);
+    const filter = { customer_email: userEmail };
+    const carts = await Carts.find(filter);
+    console.log("carts: ", carts?.length);
+    let totalProductPrice = 0;
+    let totalProducts = 0;
 
-  for (const cart of carts) {
-    totalProductPrice += cart.total_price;
-    totalProducts += cart.quantity;
-  }
-  const tran_id = new ObjectId().toString();
+    for (const cart of carts) {
+      totalProductPrice += cart.total_price;
+      totalProducts += cart.quantity;
+    }
+    const tran_id = new ObjectId().toString();
 
-  const data = {
-    total_amount: totalProductPrice,
-    currency: "BDT",
-    tran_id: tran_id, // use unique tran_id for each api call
-    success_url: `https://boi-binimoy-server.vercel.app/api/v1/success?tran_id=${tran_id}&email=${userEmail}`, //TODO: change the base url before deploy
-    fail_url: "http://localhost:3030/fail",
-    cancel_url: "http://localhost:3030/cancel",
-    ipn_url: "http://localhost:3030/ipn",
-    shipping_method: "Courier",
-    product_name: "Computer.",
-    product_category: "Book",
-    product_profile: "gebneral",
-    cus_name: "Customer Name",
-    cus_email: userEmail,
-    cus_add1: "Dhaka",
-    cus_add2: "Dhaka",
-    cus_city: "Dhaka",
-    cus_state: "Dhaka",
-    cus_postcode: "1000",
-    cus_country: "Bangladesh",
-    cus_phone: "01711111111",
-    cus_fax: "01711111111",
-    ship_name: "Customer Name",
-    ship_add1: "Dhaka",
-    ship_add2: "Dhaka",
-    ship_city: "Dhaka",
-    ship_state: "Dhaka",
-    ship_postcode: 1000,
-    ship_country: "Bangladesh",
-  };
-
-  const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
-
-  sslcz.init(data).then(async (apiResponse) => {
-    // Redirect the user to payment gateway
-    let GatewayPageURL = apiResponse.GatewayPageURL;
-    res.send({ url: GatewayPageURL });
-
-    const finalOrder = {
-      carts,
-      tranjectionId: tran_id,
-      isPaid: false,
-      isDeliverd: false,
-      totalProducts,
-      totalPrice: totalProductPrice,
-      clientEmail: userEmail,
+    const data = {
+      total_amount: totalProductPrice,
+      currency: "BDT",
+      tran_id: tran_id, // use unique tran_id for each api call
+      success_url: `http://localhost:5000/api/v1/success?tran_id=${tran_id}&email=${userEmail}`, //TODO: change the base url before deploy
+      fail_url: "http://localhost:3030/fail",
+      cancel_url: "http://localhost:3030/cancel",
+      ipn_url: "http://localhost:3030/ipn",
+      shipping_method: "Courier",
+      product_name: "Computer.",
+      product_category: "Book",
+      product_profile: "gebneral",
+      cus_name: "Customer Name",
+      cus_email: userEmail,
+      cus_add1: "Dhaka",
+      cus_add2: "Dhaka",
+      cus_city: "Dhaka",
+      cus_state: "Dhaka",
+      cus_postcode: "1000",
+      cus_country: "Bangladesh",
+      cus_phone: "01711111111",
+      cus_fax: "01711111111",
+      ship_name: "Customer Name",
+      ship_add1: "Dhaka",
+      ship_add2: "Dhaka",
+      ship_city: "Dhaka",
+      ship_state: "Dhaka",
+      ship_postcode: 1000,
+      ship_country: "Bangladesh",
     };
 
-    const newOrder = new Orders(finalOrder);
-    await newOrder.save();
-    //  res.send(order)
-  });
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+
+    sslcz.init(data).then(async (apiResponse) => {
+      // Redirect the user to payment gateway
+      let GatewayPageURL = apiResponse.GatewayPageURL;
+      res.send({ url: GatewayPageURL });
+
+      const finalOrder = {
+        carts,
+        tranjectionId: tran_id,
+        isPaid: false,
+        status: "Processing",
+        totalProducts,
+        totalPrice: totalProductPrice,
+        clientEmail: userEmail,
+      };
+
+      const newOrder = new Orders(finalOrder);
+      await newOrder.save();
+      //  res.send(order)
+    });
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).send({ message: error.message })
+  }
 };
 
 exports.postSuccess = async (req, res) => {
@@ -89,15 +95,14 @@ exports.postSuccess = async (req, res) => {
   });
 
   if (updateOrder.modifiedCount >= 1) {
-    const filter = { user_email: userEmail };
+    const filter = {customer_email: userEmail };
     const carts = await Carts.find(filter);
 
     carts.map(async (cart) => {
-      const query = { _id: new mongoose.Types.ObjectId(cart?.book_id) };
-      const book = await Products.findById(query);
-      let stock_limit = book?.stock_limit;
+      const product = await Products.findById(cart?.product_id);
+      let stock_limit = product?.stock_limit;
 
-    await Products.updateOne(query, {
+      await Products.updateOne(query, {
         $set: {
           stock_limit: stock_limit - cart?.quantity,
         },
@@ -105,58 +110,9 @@ exports.postSuccess = async (req, res) => {
     });
     await Carts.deleteMany(filter);
 
-    // this part for individual sellers
-    const order = await Orders.findOne(query);
-    const orderCarts = order?.carts;
+    
 
-    const { tranjectionId, isPaid, isDeliverd, clientEmail } = order;
-    let totalProducts = 0,
-      totalPrice = 0;
-
-    const productsCartsByOwner = {};
-
-    // Iterate through each cart in the order
-
-    orderCarts.forEach((cart) => {
-      const ownerEmail = cart.owner_email;
-
-      // If the owner_email is not a key in the productsCartsByOwner object, create it
-      if (!productsCartsByOwner[ownerEmail]) {
-        productsCartsByOwner[ownerEmail] = [];
-      }
-      // Add the cart to the corresponding owner's array
-      productsCartsByOwner[ownerEmail].push(cart);
-      totalProducts += cart.quantity;
-      totalPrice += cart.total_price;
-    });
-
-    // Iterate through each owner_email and distribute the payment
-    for (const ownerEmail in productsCartsByOwner) {
-      const ownerCarts = productsCartsByOwner[ownerEmail];
-      const ownerTotalPrice = ownerCarts.reduce(
-        (total, cart) => total + cart.total_price,
-        0
-      );
-
-      const sellerOrder = {
-        carts: ownerCarts,
-        tranjectionId,
-        isPaid,
-        isDeliverd,
-        totalProducts: ownerCarts.reduce(
-          (total, cart) => total + cart.quantity,
-          0
-        ),
-        totalPrice: ownerTotalPrice,
-        clientEmail,
-        ownerEmail,
-      };
-
-      const newSellerOrder = new SellerOrders(sellerOrder);
-      await newSellerOrder.save();
-    }
-
-    res.redirect("https://boibinimoy.netlify.app/dashboard/my-orders"); // TODO:  set live link before deploy
+    res.redirect("http://localhost:5173/dashboard/my_order"); // TODO:  set live link before deploy
   }
   // res.send(deleteCarts);
 };

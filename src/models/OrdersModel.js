@@ -3,17 +3,17 @@ const { default: mongoose } = require("mongoose");
 const ordersSchema = new mongoose.Schema({
   carts: [
     {
-      user_name: {
+      customer_name: {
         type: String,
         required: true,
       },
-      user_email: {
+      customer_name: {
         type: String,
         required: true,
       },
       owner_email: {
         type: String,
-        required: true,
+        // required: true,
       },
       product_id: {
         type: String,
@@ -51,6 +51,7 @@ const ordersSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    default: "Processing",
     required: true,
   },
   totalProduct: Number,

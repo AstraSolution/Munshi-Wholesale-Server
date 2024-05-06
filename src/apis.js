@@ -11,6 +11,7 @@ const routers = [
   require("./routers/wishlistRoutes"),
   require("./routers/OrdersRouter"),
   require("./routers/reviewsRoutes"),
+  require("./routers/PaymentRoutes"),
   require("./routers/jwtRoute"),
 ];
 

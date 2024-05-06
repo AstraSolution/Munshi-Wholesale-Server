@@ -1,9 +1,5 @@
 const express = require("express");
-const {
-  postOrder,
-  postSuccess,
-} = require("../../Controller/PaymentControlers/PaymentControllers");
-const Orders = require("../../Models/Orders/Orders");
+const { postOrder, postSuccess } = require("../controllers/PaymentControllers");
 const PaymentRouter = express.Router();
 
 // order create route
