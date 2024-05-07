@@ -12,7 +12,7 @@ const routers = [
   require("./routers/OrdersRouter"),
   require("./routers/reviewsRoutes"),
   require("./routers/PaymentRoutes"),
-  require("./routers/jwtRoute"),
+  require("./routers/jwtRoute")
 ];
 
 // Dynamically apply routers
