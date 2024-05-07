@@ -11,7 +11,7 @@ cartsRouter.get("/myCarts/:email", getMyCartsController )
 cartsRouter.get("/myCarts/:id", getOneCartController )
 
 // post a cart
-cartsRouter.post("/myCarts", postCartController )
+cartsRouter.post("/myCarts/:email", postCartController )
 
 // post many cart
 cartsRouter.post("/carts", postManyCartsConroller )

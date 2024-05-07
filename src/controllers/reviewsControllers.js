@@ -17,10 +17,20 @@ exports.getReviewsByProductId = async (req, res) => {
 // post a new review
 exports.postReview = async (req, res) => {
   try {
-    console.log(req.body);
     const review = new Reviews(req.body);
     const newReview = await review.save();
     res.send(newReview);
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get a  review
+exports.getOneReview = async (req, res) => {
+  try {
+    const review = await Reviews.findById(req.params.id);
+    res.send(review);
   } catch (error) {
     console.log("error: ", error);
     res.status(500).json({ message: error.message });
