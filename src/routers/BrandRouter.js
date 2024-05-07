@@ -6,7 +6,7 @@ const {addBrand, getAllBrands, getBrandById, updateBrand, deleteBrand} = require
 brandRouter.post('/brand', addBrand);
 
 // Get All Brands
-brandRouter.get('/brand', getAllBrands);
+brandRouter.get('/brands', getAllBrands);
 
 // Get a Brand
 brandRouter.get('/brand/:id', getBrandById);
