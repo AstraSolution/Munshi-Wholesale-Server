@@ -21,7 +21,7 @@ productRouter.get("/products", getAllProducts);
 productRouter.get("/products/:id", getProductById);
 
 // Get a product by title
-productRouter.get("/products/title/:title", getProductByTitle);
+productRouter.get("/products/search/:title", getProductByTitle);
 
 // Update Product Details
 productRouter.put("/products/:id", updateProduct);
