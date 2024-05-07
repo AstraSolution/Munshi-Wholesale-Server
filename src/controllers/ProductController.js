@@ -41,6 +41,9 @@ exports.getProductByTitle = async (req, res) => {
     const decodedTitle = decodeURIComponent(encodedTitle);
     const regex = new RegExp(decodedTitle, "i");
     const products = await Product.find({ title: regex });
+    if (!products) {
+      return res.status(401).json({ message: "Product not found" });
+    }
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
