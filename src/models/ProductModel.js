@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
   title: String,
-  image: [String],
+  image: Array,
   category: String,
   brand: String,
   price: Number,
@@ -22,25 +22,25 @@ const productSchema = new mongoose.Schema({
     speed_settings: String,
     chuck_size: String,
     clutch_settings: String,
-    safety_features: [String],
-    compatibility: [String],
+    safety_features: Array,
+    compatibility: Array,
   },
-  included_accessories: [String],
+  included_accessories: Array,
   weight: String,
   dimensions: String,
   warranty: String,
-  color: [String],
-  variant: [String],
+  color: Array,
+  variant: Array,
   material: String,
   certification: String,
-  usage: [String],
-  recommended_applications: [String],
-  features: [String],
+  usage: Array,
+  recommended_applications: Array,
+  features: Array,
   availability: String,
   shipping_weight: String,
   shipping_dimensions: String,
   shipping_restrictions: String,
-  shipping_method: [String],
+  shipping_method: Array,
   assembly_required: Boolean,
   country_of_origin: String,
   manufacturer: String,
@@ -48,5 +48,5 @@ const productSchema = new mongoose.Schema({
   return_policy: String,
 });
 
-const Products = mongoose.model("products", productSchema);
-module.exports = Products;
+const Product = mongoose.model("Product", productSchema);
+module.exports = Product;

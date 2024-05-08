@@ -10,15 +10,72 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-// Get All Products
+// get all products by filtering
 exports.getAllProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
+  const brand = req.query.brand; // Brand filter from query
+  const minPrice = parseFloat(req.query.minPrice); // Minimum price filter from query
+  const maxPrice = parseFloat(req.query.maxPrice); // Maximum price filter from query
+  const category = req.query.category; // Category filter from query
+
   try {
-    const products = await Product.find();
+    let matchCriteria = {};
+    // Constructing match criteria based on provided filters
+    if (brand) {
+      matchCriteria.brand = brand;
+    }
+    if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+      matchCriteria.price = { $gte: minPrice, $lte: maxPrice };
+    }
+    if (category) {
+      matchCriteria.category = { $regex: category, $options: "i" }; // Case-insensitive regex matching for category
+    }
+
+    const totalProduct = await Product.countDocuments(matchCriteria);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const pagination = {};
+    if (endIndex < totalProduct) {
+      pagination.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+
+    const aggregationPipeline = [
+      { $match: matchCriteria }, // Filter documents based on match criteria
+      { $skip: startIndex },
+      { $limit: limit },
+    ];
+
+    const products = await Product.aggregate(aggregationPipeline);
+    res.json({ products, totalProduct, pagination });
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get featured products
+exports.getFeaturedProducts = async(req, res) => {
+  try {
+    const products = await Product.aggregate([
+      { $sample: { size: 8 } }, // Shuffle and limit to 8 documents
+    ]);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
 // Get a product by id
 exports.getProductById = async (req, res) => {

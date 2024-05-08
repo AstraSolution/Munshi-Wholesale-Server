@@ -1,21 +1,25 @@
 const express = require("express");
-const productRouter = express.Router();
 const {
   addProduct,
   getAllProducts,
   getProductById,
+  getProductByTitle,
   updateProduct,
   deleteProduct,
   getProductsByCategory,
   getProductsByBrand,
-  getProductByTitle,
-} = require("../controllers/ProductController");
+  getFeaturedProducts
+} = require("../controllers/productController");
+const productRouter = express.Router();
 
 // Add New Product
 productRouter.post("/products", addProduct);
 
 // Get All Products
 productRouter.get("/products", getAllProducts);
+
+// // Get featured Products
+productRouter.get("/featured-products", getFeaturedProducts);
 
 // Get a product by id
 productRouter.get("/products/:id", getProductById);
