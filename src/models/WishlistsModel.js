@@ -4,7 +4,7 @@ const { default: mongoose } = require("mongoose");
 const WishlistSchema = new mongoose.Schema({
     customer_name: {
        type: String,
-       required: true
+    //    required: true
     },
     customer_email: {
         type: String,
