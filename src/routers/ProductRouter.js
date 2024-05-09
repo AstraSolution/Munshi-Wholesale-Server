@@ -1,21 +1,27 @@
 const express = require("express");
-const productRouter = express.Router();
 const {
   addProduct,
-  getAllProducts,
+  getFeaturedProducts,
   getProductById,
+  getProductByTitle,
   updateProduct,
   deleteProduct,
   getProductsByCategory,
   getProductsByBrand,
-  getProductByTitle,
+  getLowStockProducts,
+  getAllProducts,
 } = require("../controllers/ProductController");
+
+const productRouter = express.Router();
 
 // Add New Product
 productRouter.post("/products", addProduct);
 
 // Get All Products
 productRouter.get("/products", getAllProducts);
+
+// Get All Products
+productRouter.get("/featured-products", getFeaturedProducts);
 
 // Get a product by id
 productRouter.get("/products/:id", getProductById);
@@ -34,5 +40,8 @@ productRouter.get("/category/:category", getProductsByCategory);
 
 // Find/query products according to the brand
 productRouter.get("/brand/:brand", getProductsByBrand);
+
+// Find/query products according to the brand
+productRouter.get("/lowStockProducts", getLowStockProducts);
 
 module.exports = productRouter;

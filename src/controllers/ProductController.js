@@ -1,9 +1,9 @@
-const Product = require("../models/ProductModel");
+const Products = require("../models/ProductModel");
 
 // Add New Product
 exports.addProduct = async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const product = await Products.create(req.body);
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -12,8 +12,66 @@ exports.addProduct = async (req, res) => {
 
 // Get All Products
 exports.getAllProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 12;
+  const brand = req.query.brand; // Brand filter from query
+  const minPrice = parseFloat(req.query.minPrice); // Minimum price filter from query
+  const maxPrice = parseFloat(req.query.maxPrice); // Maximum price filter from query
+  const category = req.query.category; // Category filter from query
+
   try {
-    const products = await Product.find();
+    let matchCriteria = {};
+
+    // Constructing match criteria based on provided filters
+    if (brand) {
+      matchCriteria.brand = brand;
+    }
+    if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+      matchCriteria.price = { $gte: minPrice, $lte: maxPrice };
+    }
+    if (category) {
+      matchCriteria.category = { $regex: category, $options: "i" }; // Case-insensitive regex matching for category
+    }
+
+    const totalProduct = await Products.countDocuments(matchCriteria);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const pagination = {};
+    if (endIndex < totalProduct) {
+      pagination.next = {
+        page: page + 1,
+        limit: limit,
+      };
+    }
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit: limit,
+      };
+    }
+
+    const aggregationPipeline = [
+      { $match: matchCriteria }, // Filter documents based on match criteria
+      { $skip: startIndex },
+      { $limit: limit },
+    ];
+
+    const products = await Products.aggregate(aggregationPipeline);
+    res.json({ products, totalProduct, pagination });
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get featured products
+exports.getFeaturedProducts = async (req, res) => {
+  try {
+    const products = await Products.aggregate([
+      { $sample: { size: 8 } }, // Shuffle and limit to 8 documents
+    ]);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -24,7 +82,7 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Products.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -40,7 +98,7 @@ exports.getProductByTitle = async (req, res) => {
     const encodedTitle = req.params.title;
     const decodedTitle = decodeURIComponent(encodedTitle);
     const regex = new RegExp(decodedTitle, "i");
-    const products = await Product.find({ title: regex });
+    const products = await Products.find({ title: regex });
     if (!products) {
       return res.status(401).json({ message: "Product not found" });
     }
@@ -54,7 +112,7 @@ exports.getProductByTitle = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
+    const updatedProduct = await Products.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     if (!updatedProduct) {
@@ -70,7 +128,7 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await Product.findByIdAndDelete(id);
+    const deletedProduct = await Products.findByIdAndDelete(id);
     if (!deletedProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -84,7 +142,7 @@ exports.deleteProduct = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const products = await Product.find({ category });
+    const products = await Products.find({ category });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -95,9 +153,20 @@ exports.getProductsByCategory = async (req, res) => {
 exports.getProductsByBrand = async (req, res) => {
   try {
     const { brand } = req.params;
-    const products = await Product.find({ brand });
+    const products = await Products.find({ brand });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Get products with stock limit less than 20
+exports.getLowStockProducts = async (req, res) => {
+  try {
+    const lowStockProducts = await Products.find({ quantity: { $lt: 20 } });
+    res.status(200).json({ lowStockProducts });
+  } catch (error) {
+    console.error("Error getting low stock products:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

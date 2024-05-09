@@ -1,4 +1,5 @@
 const Orders = require("../models/OrdersModel");
+const Products = require("../models/ProductModel");
 const Product = require("../models/ProductModel");
 const Users = require("../models/UserModel");
 
@@ -172,3 +173,132 @@ exports.getTodaysSalesAndOrders = async (req, res) => {
   }
 };
 
+// Get top 5 brands and the total quantity of products ordered by each brand
+exports.getTopBrandsWithQuantity = async (req, res) => {
+  try {
+    // Aggregate orders to get unique product_ids
+    const orderedProducts = await Orders.aggregate([
+      { $unwind: '$carts' }, // Unwind to destructure the array of carts
+      { $group: { _id: '$carts.product_id', quantity: { $sum: '$carts.quantity' } } }, // Group by product_id to get unique values and calculate total quantity
+    ]);
+
+    // Extract product_ids and their quantities from the aggregated result
+    const productQuantities = {};
+    orderedProducts.forEach((item) => {
+      productQuantities[item._id] = item.quantity;
+    });
+
+    // Find products with the extracted product_ids
+    const products = await Products.find({ _id: { $in: Object.keys(productQuantities) } });
+
+    // Create a map to store brand and total quantity ordered
+    const brandQuantities = {};
+
+    // Calculate total quantity ordered for each brand
+    products.forEach((product) => {
+      const brand = product.brand;
+      const quantity = productQuantities[product._id];
+      if (brandQuantities[brand]) {
+        brandQuantities[brand] += quantity;
+      } else {
+        brandQuantities[brand] = quantity;
+      }
+    });
+
+    // Sort brandQuantities by total quantity in descending order
+    const sortedBrands = Object.keys(brandQuantities).sort((a, b) => brandQuantities[b] - brandQuantities[a]);
+
+    // Get top 5 brands
+    const topBrandsWithQuantity = sortedBrands.slice(0, 5).map((brand) => ({ brand, quantity: brandQuantities[brand] }));
+
+    res.status(200).json({ topBrandsWithQuantity });
+  } catch (error) {
+    console.error("Error getting top brands with quantity:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Get top 5 category and the total quantity of products ordered by each brand
+exports.getTopCategoriesWithQuantity = async (req, res) => {
+  try {
+    // Aggregate orders to get unique product_ids
+    const orderedProducts = await Orders.aggregate([
+      { $unwind: '$carts' }, // Unwind to destructure the array of carts
+      { $group: { _id: '$carts.product_id', quantity: { $sum: '$carts.quantity' } } }, // Group by product_id to get unique values and calculate total quantity
+    ]);
+
+    // Extract product_ids and their quantities from the aggregated result
+    const productQuantities = {};
+    orderedProducts.forEach((item) => {
+      productQuantities[item._id] = item.quantity;
+    });
+
+    // Find products with the extracted product_ids
+    const products = await Products.find({ _id: { $in: Object.keys(productQuantities) } });
+
+    // Create a map to store category and total quantity ordered
+    const categoryQuantities = {};
+
+    // Calculate total quantity ordered for each category
+    products.forEach((product) => {
+      const category = product.category;
+      const quantity = productQuantities[product._id];
+      if (categoryQuantities[category]) {
+        categoryQuantities[category] += quantity;
+      } else {
+        categoryQuantities[category] = quantity;
+      }
+    });
+
+    // Sort categoryQuantities by total quantity in descending order
+    const sortedcategorys = Object.keys(categoryQuantities).sort((a, b) => categoryQuantities[b] - categoryQuantities[a]);
+
+    // Get top 5 categorys
+    const topcategorysWithQuantity = sortedcategorys.slice(0, 5).map((category) => ({ category, quantity: categoryQuantities[category] }));
+
+    res.status(200).json({ topcategorysWithQuantity });
+  } catch (error) {
+    console.error("Error getting top categorys with quantity:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+// Get top 10 popular products based on orders
+exports.getTopPopularProducts = async (req, res) => {
+  try {
+    // Aggregate orders to count occurrences of each product
+    const popularProducts = await Orders.aggregate([
+      { $unwind: '$carts' }, // Unwind to destructure the array of carts
+      {
+        $group: {
+          _id: '$carts.product_id', // Group by product_id
+          totalOrders: { $sum: '$carts.quantity' }, // Count the total orders for each product
+        },
+      },
+      { $sort: { totalOrders: -1 } }, // Sort by total orders in descending order
+      { $limit: 10 }, // Limit to 10 results
+    ]);
+
+    // Extract product_ids from the aggregated result
+    const productIds = popularProducts.map((item) => item._id);
+
+    // Find products with the extracted product_ids
+    const products = await Products.find({ _id: { $in: productIds } });
+
+    // Map popularProducts with product details
+    const popularProductsWithDetails = popularProducts.map((item) => {
+      const product = products.find((product) => product._id.toString() === item._id.toString());
+      return {
+        product_id: item._id,
+        totalOrders: item.totalOrders,
+        product_details: product,
+      };
+    });
+
+    res.status(200).json({ popularProducts: popularProductsWithDetails });
+  } catch (error) {
+    console.error("Error getting top popular products:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
