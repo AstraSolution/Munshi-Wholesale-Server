@@ -1,7 +1,6 @@
 const express = require("express");
 const {
   addProduct,
-  getAllProducts,
   getFeaturedProducts,
   getProductById,
   getProductByTitle,
@@ -10,7 +9,9 @@ const {
   getProductsByCategory,
   getProductsByBrand,
   getLowStockProducts,
-} = require("../controllers/productController");
+  getAllProducts,
+} = require("../controllers/ProductController");
+
 const productRouter = express.Router();
 
 // Add New Product

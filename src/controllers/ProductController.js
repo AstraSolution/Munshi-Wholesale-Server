@@ -30,7 +30,7 @@ exports.getAllProducts = async (req, res) => {
       matchCriteria.price = { $gte: minPrice, $lte: maxPrice };
     }
     if (category) {
-      matchCriteria.category = { $regex: category, $options: 'i' }; // Case-insensitive regex matching for category
+      matchCriteria.category = { $regex: category, $options: "i" }; // Case-insensitive regex matching for category
     }
 
     const totalProduct = await Products.countDocuments(matchCriteria);
@@ -67,7 +67,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 // get featured products
-exports.getFeaturedProducts = async(req, res) =>{
+exports.getFeaturedProducts = async (req, res) => {
   try {
     const products = await Products.aggregate([
       { $sample: { size: 8 } }, // Shuffle and limit to 8 documents
@@ -76,7 +76,7 @@ exports.getFeaturedProducts = async(req, res) =>{
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 // Get a product by id
 exports.getProductById = async (req, res) => {
@@ -159,7 +159,6 @@ exports.getProductsByBrand = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Get products with stock limit less than 20
 exports.getLowStockProducts = async (req, res) => {
