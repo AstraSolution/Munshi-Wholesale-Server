@@ -13,18 +13,7 @@ exports.getWishlist = async (req, res) => {
   }
 };
 
-// add new wishlist controller
-exports.addToWishlist = async (req, res) => {
-  try {
-    // const { userEmail, bookId, title, cover, writer, price } = req.body;
-    const newWishlist = new Wishlist(req.body);
-    await newWishlist.save();
-    res.status(201).json(newWishlist);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+
 
 // add to wishlists
 exports.addToWishlists = async (req, res) => {
@@ -63,6 +52,33 @@ exports.addToWishlists = async (req, res) => {
     });
   } catch (error) {
     console.error("Error adding cart data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// add to new wishlist
+exports.addToWishlist = async (req, res) => {
+  try {
+    const wishlist = req.body;
+    const email = req.params.email;
+    const filter = { customer_email: email };
+    const wishlists = await Wishlist.find(filter);
+    const existingProduct = wishlists.find(
+      (item) => item.product_id === wishlist?.product_id
+    );
+
+
+    if (existingProduct) {
+      return res.status(203).send({
+        message: "This product already exists",
+        insertedId: null,
+      });
+    }
+    const newWishlist = new Wishlist(wishlist);
+    const result = await newWishlist.save();
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error getting cart data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

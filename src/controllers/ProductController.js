@@ -14,10 +14,22 @@ exports.addProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
-  const brand = req.query.brand; // Brand filter from query
-  const minPrice = parseFloat(req.query.minPrice); // Minimum price filter from query
-  const maxPrice = parseFloat(req.query.maxPrice); // Maximum price filter from query
-  const category = req.query.category; // Category filter from query
+  const searchItems = req?.query?.searchItems || {};
+  
+  if (typeof searchItems === 'string') {
+    try {
+      // Attempt to parse searchItems string
+      JSON.parse(searchItems);
+    } catch (error) {
+      // Handle parsing error
+      console.log("Error parsing searchItems:", error);
+    }
+  }
+  const brand = searchItems?.brand; // Brand filter from query
+
+  const minPrice = parseFloat(searchItems?.minPrice); // Minimum price filter from query
+  const maxPrice = parseFloat(searchItems?.maxPrice); // Maximum price filter from query
+  const category = searchItems?.category; // Category filter from query
 
   try {
     let matchCriteria = {};

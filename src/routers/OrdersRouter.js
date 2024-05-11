@@ -11,6 +11,7 @@ const {
   getTopCategoriesWithQuantity,
   getTopPopularProducts,
 } = require("../controllers/OrdersControllers");
+const Orders = require("../models/OrdersModel");
 
 const OrdersRouter = express.Router();
 
@@ -43,5 +44,7 @@ OrdersRouter.get("/topPopularCategories", getTopCategoriesWithQuantity);
 
 // Get 10 top popular products based on orders
 OrdersRouter.get("/topPopularProducts", getTopPopularProducts);
+
+
 
 module.exports = OrdersRouter;

@@ -110,7 +110,7 @@ exports.postSuccess = async (req, res) => {
     });
     await Carts.deleteMany(filter);
 
-    res.redirect("http://localhost:5173/dashboard/my_order"); // TODO:  set live link before deploy
+    res.redirect("https://sensational-valkyrie-0f292b.netlify.app/dashboard/my_order"); // TODO:  set live link before deploy
   }
   // res.send(deleteCarts);
 };
