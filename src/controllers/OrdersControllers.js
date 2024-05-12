@@ -3,27 +3,49 @@ const Products = require("../models/ProductModel");
 const Product = require("../models/ProductModel");
 const Users = require("../models/UserModel");
 
+
 // get my orders by email
 exports.getMyOrders = async (req, res) => {
   try {
     const email = req.params.email;
     const filter = { clientEmail: email };
     const orders = await Orders.find(filter).sort({ orderDate: -1 });
-    const myOrders = [];
-    let totalSell = 0;
 
-    orders.forEach((order) => {
-      totalSell += order?.totalProducts;
-      const cartsInOrder = order.carts;
-      myOrders.push(...cartsInOrder);
-    });
+    const myOrders = orders.reduce((accumulator, order) => {
+      // Flatten each order's carts array into one array of attributes
+      order.carts.forEach(cart => {
+        const cartAttributes = {
+          customer_name: cart.customer_name,
+          owner_email: cart.owner_email,
+          product_id: cart.product_id,
+          unit_price: cart.unit_price,
+          total_price: cart.total_price,
+          quantity: cart.quantity,
+          isDelivered: cart.isDelivered,
+          cover_image: cart.product_image,
+          stock_limit: cart.stock_limit,
+          title: cart.title,
+          tranjectionId: order.tranjectionId,
+          isPaid: order.isPaid,
+          status: order.status,
+          totalProduct: order.totalProduct,
+          totalPrice: order.totalPrice,
+          orderDate: order.orderDate,
+          clientEmail: order.clientEmail
+        };
+        accumulator.push(cartAttributes);
+      });
+      return accumulator;
+    }, []);
 
-    res.send({ orders, myOrders });
+    res.send({ myOrders });
   } catch (error) {
     console.error("Error getting my orders data:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 // get seller orders by owner email;
 

@@ -30,7 +30,7 @@ exports.postOrder = async (req, res) => {
       total_amount: totalProductPrice,
       currency: "BDT",
       tran_id: tran_id, // use unique tran_id for each api call
-      success_url: `http://localhost:5000/api/v1/success?tran_id=${tran_id}&email=${userEmail}`, //TODO: change the base url before deploy
+      success_url: `https://munshi-wholesale-server.vercel.app/api/v1/success?tran_id=${tran_id}&email=${userEmail}`, //TODO: change the base url before deploy
       fail_url: "http://localhost:3030/fail",
       cancel_url: "http://localhost:3030/cancel",
       ipn_url: "http://localhost:3030/ipn",
@@ -110,9 +110,7 @@ exports.postSuccess = async (req, res) => {
     });
     await Carts.deleteMany(filter);
 
-    
-
-    res.redirect("http://localhost:5173/dashboard/my_order"); // TODO:  set live link before deploy
+    res.redirect("https://sensational-valkyrie-0f292b.netlify.app/dashboard/my_order"); // TODO:  set live link before deploy
   }
   // res.send(deleteCarts);
 };
