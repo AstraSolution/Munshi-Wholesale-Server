@@ -30,7 +30,7 @@ productRouter.get("/products/:id", getProductById);
 productRouter.get("/products/search/:title", getProductByTitle);
 
 // Update Product Details
-productRouter.put("/products/:id", updateProduct);
+productRouter.patch("/products/:id", updateProduct);
 
 // Delete Product
 productRouter.delete("/products/:id", deleteProduct);

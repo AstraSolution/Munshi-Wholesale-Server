@@ -13,24 +13,33 @@ exports.addProduct = async (req, res) => {
 // Get All Products
 exports.getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 12;
-  const brand = req.query.brand; // Brand filter from query
-  const minPrice = parseFloat(req.query.minPrice); // Minimum price filter from query
-  const maxPrice = parseFloat(req.query.maxPrice); // Maximum price filter from query
-  const category = req.query.category; // Category filter from query
+  const limit = parseInt(req.query.limit) || 20;
+  const searchItems = req?.query?.searchItems || {};
 
+  let brand, minPrice, maxPrice, category;
   try {
+    if (typeof searchItems === "string") {
+      const parseSearchItems = JSON.parse(searchItems);
+      brand = parseSearchItems?.brand;
+      category = parseSearchItems?.category;
+      minPrice = parseSearchItems?.minPrice;
+      maxPrice = parseSearchItems?.maxPrice;
+    }
     let matchCriteria = {};
 
     // Constructing match criteria based on provided filters
-    if (brand) {
-      matchCriteria.brand = brand;
+    const orConditions = [];
+    if (brand && Array.isArray(brand) && brand.length > 0) {
+      orConditions.push({ brand: { $in: brand } });
+    }
+    if (category && Array.isArray(category) && category.length > 0) {
+      orConditions.push({ category: { $in: category } });
+    }
+    if (orConditions.length > 0) {
+      matchCriteria.$or = orConditions;
     }
     if (!isNaN(minPrice) && !isNaN(maxPrice)) {
       matchCriteria.price = { $gte: minPrice, $lte: maxPrice };
-    }
-    if (category) {
-      matchCriteria.category = { $regex: category, $options: "i" }; // Case-insensitive regex matching for category
     }
 
     const totalProduct = await Products.countDocuments(matchCriteria);
@@ -65,6 +74,9 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
 
 // get featured products
 exports.getFeaturedProducts = async (req, res) => {

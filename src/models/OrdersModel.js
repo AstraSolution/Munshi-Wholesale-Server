@@ -7,13 +7,13 @@ const ordersSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
-      customer_name: {
+      customer_email: {
         type: String,
         required: true,
       },
       owner_email: {
         type: String,
-        // required: true,
+        // required: true
       },
       product_id: {
         type: String,
@@ -31,15 +31,12 @@ const ordersSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      isDeliverd: {
-        type: Boolean,
-      },
-      cover_image: {
-        type: String,
-      },
+      product_image: [String],
       stock_limit: Number,
       title: String,
-    },
+      dimensions: String,
+      color: [String],
+    }
   ],
   tranjectionId: {
     type: String,
@@ -63,6 +60,7 @@ const ordersSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  updatedAt: Date,
   clientEmail: {
     type: String,
     required: true,

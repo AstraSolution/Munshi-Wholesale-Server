@@ -10,9 +10,15 @@ const {
   getTopBrandsWithQuantity,
   getTopCategoriesWithQuantity,
   getTopPopularProducts,
+  getAllOrders,
+  orderUpdate,
 } = require("../controllers/OrdersControllers");
 
 const OrdersRouter = express.Router();
+
+
+// get all orders 
+OrdersRouter.get("/all-orders", getAllOrders);
 
 // get my orders by email
 OrdersRouter.get("/my-orders/:email", getMyOrders);
@@ -43,5 +49,10 @@ OrdersRouter.get("/topPopularCategories", getTopCategoriesWithQuantity);
 
 // Get 10 top popular products based on orders
 OrdersRouter.get("/topPopularProducts", getTopPopularProducts);
+
+
+// update order
+OrdersRouter.patch("/orders/:id", orderUpdate)
+
 
 module.exports = OrdersRouter;
