@@ -13,7 +13,7 @@ exports.addProduct = async (req, res) => {
 // Get All Products
 exports.getAllProducts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 12;
+  const limit = parseInt(req.query.limit) || 20;
   const searchItems = req?.query?.searchItems || {};
 
   let brand, minPrice, maxPrice, category;

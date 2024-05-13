@@ -5,7 +5,6 @@ exports.getReviewsByProductId = async (req, res) => {
   try {
     const productId = req.params.productId;
     const filter = { product_id: productId };
-
     const result = await Reviews.find(filter);
     res.send(result);
   } catch (error) {

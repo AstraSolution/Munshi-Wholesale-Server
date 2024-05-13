@@ -60,6 +60,7 @@ const ordersSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  updatedAt: Date,
   clientEmail: {
     type: String,
     required: true,

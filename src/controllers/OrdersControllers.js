@@ -4,6 +4,47 @@ const Product = require("../models/ProductModel");
 const Users = require("../models/UserModel");
 
 
+
+// get all orders 
+exports.getAllOrders = async (req, res) => {
+  try {
+
+    const orders = await Orders.find().sort({ orderDate: -1 });
+    const allOrders = orders.reduce((accumulator, order) => {
+      // Flatten each order's carts array into one array of attributes
+      order.carts.forEach(cart => {
+        const cartAttributes = {
+          _id: order._id,
+          customer_name: cart.customer_name,
+          owner_email: cart.owner_email,
+          product_id: cart.product_id,
+          unit_price: cart.unit_price,
+          total_price: cart.total_price,
+          quantity: cart.quantity,
+          isDelivered: cart.isDelivered,
+          cover_image: cart.product_image,
+          stock_limit: cart.stock_limit,
+          title: cart.title,
+          tranjectionId: order.tranjectionId,
+          isPaid: order.isPaid,
+          status: order.status,
+          totalProduct: order.totalProduct,
+          totalPrice: order.totalPrice,
+          orderDate: order.orderDate,
+          clientEmail: order.clientEmail
+        };
+        accumulator.push(cartAttributes);
+      });
+      return accumulator;
+    }, []);
+
+    res.send({ allOrders });
+  } catch (error) {
+    console.error("Error getting my orders data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // get my orders by email
 exports.getMyOrders = async (req, res) => {
   try {
@@ -44,6 +85,7 @@ exports.getMyOrders = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 
@@ -324,3 +366,15 @@ exports.getTopPopularProducts = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+// orders update
+exports.orderUpdate = async(req, res) => {
+  try{
+    const id = req.params.id
+    const updateStatus = await Orders.findByIdAndUpdate({_id: id}, req.body, { new: true});
+    res.send(updateStatus)
+  } catch (error){
+    console.error("Error update order status:", error);
+    res.status(500).json({ message: "Internal server error" });  }
+}
