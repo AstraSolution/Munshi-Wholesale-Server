@@ -25,6 +25,6 @@ reviewsRouter.delete("/reviews/:id", deleteReview);
 reviewsRouter.patch("/reviews/:id", updateReview);
 
 // get review by user email
-reviewsRouter.get("/reviews/user/:userEmail", getReviewsByUserEmail);
+reviewsRouter.get("/reviews/:userEmail", getReviewsByUserEmail);
 
 module.exports = reviewsRouter;
