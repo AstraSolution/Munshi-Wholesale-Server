@@ -5,7 +5,8 @@ const {
   deleteReview,
   updateReview,
   getOneReview,
-  getReviewsByUserEmail,
+  
+  getUserReviewsByEmail,
 } = require("../controllers/reviewsControllers");
 const reviewsRouter = express.Router();
 
@@ -25,6 +26,6 @@ reviewsRouter.delete("/reviews/:id", deleteReview);
 reviewsRouter.patch("/reviews/:id", updateReview);
 
 // get review by user email
-reviewsRouter.get("/reviews/:userEmail", getReviewsByUserEmail);
+reviewsRouter.get("/reviews/user/:email", getUserReviewsByEmail);
 
 module.exports = reviewsRouter;

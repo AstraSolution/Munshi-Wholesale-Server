@@ -61,15 +61,13 @@ exports.deleteReview = async (req, res) => {
 };
 
 // get reviews by user email
-exports.getReviewsByUserEmail = async (req, res) => {
+exports.getUserReviewsByEmail = async (req, res) => {
   try {
-    const userEmail = req.params.userEmail;
-    const filter = { user_email: userEmail };
-
-    const result = await Reviews.find(filter);
-    res.send(result);
+    const userEmail = req.params.email;
+    const userReviews = await Reviews.find({ user_email: userEmail });
+    res.json(userReviews);
   } catch (error) {
-    console.log("error: ", error);
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching user reviews:', error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
