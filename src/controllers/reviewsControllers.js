@@ -36,11 +36,12 @@ exports.getOneReview = async (req, res) => {
   }
 };
 
-
 // update a review
-exports.updateReview= async (req, res) => {
+exports.updateReview = async (req, res) => {
   try {
-    const result = await Reviews.findByIdAndUpdate(req.params.id, req.body, { new: true});
+    const result = await Reviews.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     res.send(result);
   } catch (error) {
     console.log("error: ", error);
@@ -48,11 +49,24 @@ exports.updateReview= async (req, res) => {
   }
 };
 
-
 // delete a review
-exports.deleteReview= async (req, res) => {
+exports.deleteReview = async (req, res) => {
   try {
     const result = await Reviews.findByIdAndDelete(req.params.id);
+    res.send(result);
+  } catch (error) {
+    console.log("error: ", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get reviews by user email
+exports.getReviewsByUserEmail = async (req, res) => {
+  try {
+    const userEmail = req.params.userEmail;
+    const filter = { user_email: userEmail };
+
+    const result = await Reviews.find(filter);
     res.send(result);
   } catch (error) {
     console.log("error: ", error);

@@ -1,5 +1,5 @@
 require("dotenv").config();
-const serverPort = process.env.SERVER_RUNNING_PORT || 5000
+const serverPort = process.env.SERVER_RUNNING_PORT || 5020
 ;
 const mongodbURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tp10jin.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
 
