@@ -2,7 +2,7 @@ const Orders = require("../models/OrdersModel");
 const Products = require("../models/ProductModel");
 const Product = require("../models/ProductModel");
 const Users = require("../models/UserModel");
-
+const cron = require('node-cron');
 
 
 // get all orders 
@@ -368,13 +368,69 @@ exports.getTopPopularProducts = async (req, res) => {
 };
 
 
-// orders update
-exports.orderUpdate = async(req, res) => {
-  try{
-    const id = req.params.id
-    const updateStatus = await Orders.findByIdAndUpdate({_id: id}, req.body, { new: true});
-    res.send(updateStatus)
-  } catch (error){
-    console.error("Error update order status:", error);
-    res.status(500).json({ message: "Internal server error" });  }
-}
+
+// Set up a cron job to run every 24 hours
+cron.schedule('0 0 * * *', async () => {
+  try {
+    // Find orders that are marked as "Shipped" and have an updatedAt timestamp more than 24 hours ago
+    const ordersToBeDelivered = await Orders.find({
+      status: "Shipped",
+      updatedAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+    });
+
+    // Update status of orders found to "Delivered"
+    for (const order of ordersToBeDelivered) {
+      await Orders.findByIdAndUpdate(order._id, { status: "Delivered" });
+    }
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    // Handle error accordingly
+  }
+});
+
+// orders update controller
+exports.orderUpdate = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateData = req.body;
+
+    // Check if status is being updated to 'Shipped'
+    if (updateData.status && updateData.status === "Shipped") {
+      // Update updatedAt field to current time
+      updateData.updatedAt = Date.now();
+
+      // Update order status to "Shipped"
+      const updateStatus = await Orders.findByIdAndUpdate({_id: id}, updateData, { new: true });
+
+      // Check if the order is updated successfully
+      if (updateStatus) {
+        res.send(updateStatus);
+        // Call handleStatusChange function to automatically update status to 'Delivered' after 24 hours
+        handleStatusChange(id);
+      } else {
+        res.status(404).json({ message: "Order not found" });
+      }
+    } else {
+      // If status is not being updated to 'Shipped', proceed normally
+      const updateStatus = await Orders.findByIdAndUpdate({_id: id}, updateData, { new: true });
+      res.send(updateStatus);
+    }
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Function to handle status change
+const handleStatusChange = async (orderId) => {
+  try {
+    // Delay for 24 hours (86400000 milliseconds)
+    setTimeout(async () => {
+      // Update order status to 'Delivered'
+      await Orders.findByIdAndUpdate(orderId, { status: "Delivered", updatedAt: Date.now() });
+    }, 86400000);
+  } catch (error) {
+    console.error("Error handling status change:", error);
+    // Handle error accordingly
+  }
+};
