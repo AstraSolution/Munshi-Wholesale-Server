@@ -34,7 +34,7 @@ exports.addToWishlists = async (req, res) => {
 
       if (existingProduct) {
         // Product already exists, skip insertion
-        continue;
+        return;
       }
 
       // Create a new cart object
