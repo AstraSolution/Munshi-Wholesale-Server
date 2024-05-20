@@ -52,6 +52,7 @@ exports.getMyOrders = async (req, res) => {
     const filter = { clientEmail: email };
     const orders = await Orders.find(filter).sort({ orderDate: -1 });
 
+    console.log(orders);
     const myOrders = orders.reduce((accumulator, order) => {
       // Flatten each order's carts array into one array of attributes
       order.carts.forEach(cart => {
@@ -375,7 +376,7 @@ cron.schedule('0 0 * * *', async () => {
     // Find orders that are marked as "Shipped" and have an updatedAt timestamp more than 24 hours ago
     const ordersToBeDelivered = await Orders.find({
       status: "Shipped",
-      updatedAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+      updatedAt: { $lte: new Date(Date.now() - 0.01 * 60 * 60 * 1000) }
     });
 
     // Update status of orders found to "Delivered"
@@ -428,7 +429,7 @@ const handleStatusChange = async (orderId) => {
     setTimeout(async () => {
       // Update order status to 'Delivered'
       await Orders.findByIdAndUpdate(orderId, { status: "Delivered", updatedAt: Date.now() });
-    }, 86400000);
+    }, 5000);
   } catch (error) {
     console.error("Error handling status change:", error);
     // Handle error accordingly

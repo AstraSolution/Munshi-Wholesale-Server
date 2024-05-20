@@ -7,10 +7,10 @@ const wishlistRouter = express.Router();
 wishlistRouter.get("/wishlist/:email", getWishlist);
 
 // post a wishlist
-wishlistRouter.post("/wishlist", addToWishlist);
+wishlistRouter.post("/wishlist/:email", addToWishlist);
 
 // post many wishlist
-wishlistRouter.post("/wishlists", addToWishlists);
+wishlistRouter.post("/wishlists/:email", addToWishlists);
 
 // delete a wishlist
 wishlistRouter.delete("/wishlist/:id", removeFromWishlist);
